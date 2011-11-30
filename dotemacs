@@ -1,0 +1,224 @@
+(setq load-path (append (list (expand-file-name "~/.emacs.d")) load-path))
+
+(require 'zenburn)
+(color-theme-zenburn)
+
+(menu-bar-mode -1)
+(toggle-scroll-bar -1)
+(tool-bar-mode -1)
+
+;; Font
+(set-default-font "terminus-10")
+
+;; Modovi
+(require 'mmm-mode)
+(require 'php-mode)
+(require 'sgml-mode)
+(autoload 'js2-mode "js2" nil t)
+
+;; Font lock mode
+(global-font-lock-mode 1)
+
+;; Idi na liniju
+(global-set-key "\M-g" 'goto-line)
+
+;; F8 ubija trenutni bafer
+(global-set-key [f8] 'kill-this-buffer)
+
+(require 'php-tokens)
+(global-set-key '[f7] 'php-tokens)
+
+;; run php lint when press f8 key
+;; php lint
+(defun phplint-thisfile ()
+(interactive)
+(compile (format "php -l %s" (buffer-file-name))))
+(add-hook 'php-mode-hook
+'(lambda ()
+(local-set-key [f6] 'phplint-thisfile)))
+;; end of php lint
+
+;; alias y za yes i n za no
+(defalias 'yes-or-no-p 'y-or-n-p)
+(defalias 'dtw 'delete-trailing-whitespace)
+
+;; highlight matches from searches
+(setq isearch-highlight t)
+(setq search-highlight t)
+(setq-default transient-mark-mode t)
+(setq query-replace-highlight t)
+
+;; turn on word wrapping in text mode
+(add-hook 'text-mode-hook 'turn-on-auto-fill)
+;; turn off word wrapping in html mode
+(add-hook 'html-mode-hook 'turn-off-auto-fill)
+
+;; replace highlighted text with what I type rather than just
+;; inserting at a point
+(delete-selection-mode t)
+
+;; TAB znaci 2 mesta
+;;(setq default-tab-width 2)
+
+;; Prikazuj vreme
+(setq display-time-day-and-date t
+      display-time-24hr-format t)
+(display-time)
+
+;;(defun my-php-mode-hook ()
+;;  (setq c-basic-offset 2)
+;;	(setq default-tab-width 2))
+;;(add-hook 'php-mode-hook 'my-php-mode-hook)
+
+(defun clean-php-mode ()
+  (interactive)
+  (php-mode)
+  (setq c-basic-offset 2) ; 2 tabs indenting
+  (setq indent-tabs-mode nil)
+  (setq fill-column 78)
+  (c-set-offset 'case-label '+)
+  (c-set-offset 'arglist-close 'c-lineup-arglist-operators))
+(c-set-offset 'arglist-intro '+) ; for FAPI arrays and DBTNG
+(c-set-offset 'arglist-cont-nonempty 'c-lineup-math) ; for DBTNG fields and values
+(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
+
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.emacs-backup"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
+
+(require 'ido)
+(ido-mode 'buffer)
+(setq ido-enable-flex-matching t)
+
+(require 'ibuffer)
+(setq ido-ignore-buffers '("\\` " "^\*Mess" "^\*Back" ".*Completion" "^\*Ido"))
+(setq ibuffer-shrink-to-minimum-size t)
+(setq ibuffer-always-show-last-buffer nil)
+(setq ibuffer-sorting-mode 'recency)
+(setq ibuffer-use-header-line t)
+;;(setq ibuffer-never-show-regexps "^\\*")
+(global-set-key [(f12)] 'ibuffer)
+
+(add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.install\\'" . php-mode))
+(add-to-list 'auto-mode-alist '("\\.tpl\\'" . html-mode))
+(setq auto-mode-alist (cons '("\\.js$" . js2-mode) auto-mode-alist))
+
+;;recentf
+(require 'recentf)
+(recentf-mode 1)
+(setq recentf-max-saved-items 500)
+(setq recentf-max-menu-items 60)
+(global-set-key [(f11)] 'recentf-open-files)
+
+;; save a list of open files in ~/.emacs.desktop
+;; save the desktop file automatically if it already exists
+(setq desktop-save 'if-exists)
+(desktop-save-mode 1)
+
+;; save a bunch of variables to the desktop file
+;; for lists specify the len of the maximal saved data also
+(setq desktop-globals-to-save
+      (append '((extended-command-history . 30)
+                (file-name-history        . 100)
+                (grep-history             . 30)
+                (compile-history          . 30)
+                (minibuffer-history       . 50)
+                (query-replace-history    . 60)
+                (read-expression-history  . 60)
+                (regexp-history           . 60)
+                (regexp-search-ring       . 20)
+                (search-ring              . 20)
+                (shell-command-history    . 50)
+                tags-file-name
+                register-alist)))
+
+(windmove-default-keybindings 'meta)
+
+
+(defun iwb ()
+  "indent whole buffer"
+  (interactive)
+  (delete-trailing-whitespace)
+  (indent-region (point-min) (point-max) nil)
+  (untabify (point-min) (point-max)))
+
+(defun iwbt ()
+  "indent whole buffer"
+  (interactive)
+  (delete-trailing-whitespace)
+  (indent-region (point-min) (point-max) nil)
+  (tabify (point-min) (point-max)))
+
+(setq auto-save-default nil)
+
+;;never yank at mouse position, always at point
+(setq mouse-yank-at-point t)
+
+(server-start)
+
+;; Matching parenthesis
+(show-paren-mode 1)
+
+;; Insert the current time in the current buffer
+(defun timestamp()
+  (interactive)
+   ;If you want to insert date and time, you can use:
+   (insert(format-time-string "TS@: %Y-%m-%d %H:%M:%S: ")))
+;; Bind Ctrl-T ("transpose") to the timestamp function - need a better key binding
+(global-set-key (kbd "C-t") 'timestamp)
+
+(defun worklog ()
+  (interactive)
+  (find-file "/home/kotnik/work.log"))
+(global-set-key [f5] 'worklog)
+
+(require 'uniquify)
+    (setq uniquify-buffer-name-style 'reverse)
+    (setq uniquify-separator "/")
+    (setq uniquify-after-kill-buffer-p t) ; rename after killing uniquified
+    (setq uniquify-ignore-buffers-re "^\\*") ; don't muck with special buffers
+
+(require 'magit)
+(global-set-key (kbd "s-s") 'magit-status)
+
+;; http://jblevins.org/projects/deft/
+(require 'deft)
+(setq deft-extension "org")
+(setq deft-directory "~/Dropbox/Notes/")
+(setq deft-text-mode 'org-mode)
+(global-set-key [f4] 'deft)
+
+(global-hl-line-mode 1)
+
+;; To customize the background color
+(set-face-background 'hl-line "#330")  ;; Emacs 22 Only
+
+(global-set-key (kbd "C-<tab>") 'ido-switch-buffer)
+
+; display buffer size in modeline
+(size-indication-mode t)
+
+; always show trailing whitespace
+(setq-default show-trailing-whitespace t)
+
+; move the mouse away from the cursor
+(mouse-avoidance-mode 'animate)
+
+; make scripts (files that start with #!) executable after saving
+(add-hook 'after-save-hook
+          'executable-make-buffer-file-executable-if-script-p)
+
+; I hate minimize
+(global-set-key "\C-z" 'ignore)
+(global-set-key "\C-x\C-z" 'ignore)
+
+; region commenting
+(global-set-key (kbd "C-;") 'comment-or-uncomment-region)
+
