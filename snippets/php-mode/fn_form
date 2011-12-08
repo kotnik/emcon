@@ -1,0 +1,18 @@
+# -*- mode: snippet -*-
+# name: function .._form()
+# key: fn_form
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+/**
+ *
+ */
+function $1_form($form_state) {
+  $form = array();
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('$2'),
+  );
+
+  return $form;
+}
