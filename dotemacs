@@ -1,9 +1,21 @@
 (setq load-path (append (list (expand-file-name "~/.emacs.d")) load-path))
 
+;; Start fullscreened
+(defun toggle-fullscreen ()
+  (interactive)
+  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+	    		 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
+  (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
+	    		 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
+)
+(toggle-fullscreen)
+
+;; Color theme
 (require 'zenburn)
 (color-theme-initialize)
 (color-theme-dark-laptop)
 
+;; Turn of bars
 (menu-bar-mode -1)
 (toggle-scroll-bar -1)
 (tool-bar-mode -1)
@@ -62,9 +74,9 @@
 ;;(setq default-tab-width 2)
 
 ;; Prikazuj vreme
-(setq display-time-day-and-date t
-      display-time-24hr-format t)
-(display-time)
+;;(setq display-time-day-and-date t
+;;      display-time-24hr-format t)
+;;(display-time)
 
 ;;(defun my-php-mode-hook ()
 ;;  (setq c-basic-offset 2)
@@ -141,7 +153,6 @@
                 register-alist)))
 
 (windmove-default-keybindings 'meta)
-
 
 (defun iwb ()
   "indent whole buffer"
@@ -232,3 +243,17 @@
 (require 'yasnippet)
 (yas/initialize)
 (yas/load-directory "~/.emacs.d/snippets")
+
+;; Show buffer name in title
+(setq frame-title-format "%b - emacs")
+
+;; Welcome message
+(defconst animate-n-steps 30)
+(defun emacs-reloaded ()
+  (animate-string (concat ";; Initialization successful, welcome to "
+  			  (substring (emacs-version) 0 16)
+			  ".")
+		  0 0)
+  (newline-and-indent)  (newline-and-indent))
+
+(add-hook 'after-init-hook 'emacs-reloaded)
