@@ -257,3 +257,14 @@
   (newline-and-indent)  (newline-and-indent))
 
 (add-hook 'after-init-hook 'emacs-reloaded)
+
+(require 'org-install)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+
+(setq org-agenda-files (list "~/Dropbox/Org/work.org"
+                             "~/Dropbox/Org/carpo.org"
+                             "~/Dropbox/Org/drupal.org"
+                             "~/Dropbox/Org/private.org"))
