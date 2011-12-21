@@ -1,17 +1,17 @@
 (setq load-path (append (list (expand-file-name "~/.emacs.d")) load-path))
 
-;; Start fullscreened
-(defun toggle-fullscreen ()
+;; Start maximized
+(defun toggle-maximize ()
   (interactive)
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
 	    		 '(2 "_NET_WM_STATE_MAXIMIZED_VERT" 0))
   (x-send-client-message nil 0 nil "_NET_WM_STATE" 32
 	    		 '(2 "_NET_WM_STATE_MAXIMIZED_HORZ" 0))
 )
-(toggle-fullscreen)
+;;(toggle-maximize)
 
 ;; Color theme
-(require 'zenburn)
+(require 'color-theme)
 (color-theme-initialize)
 (color-theme-dark-laptop)
 
@@ -121,7 +121,7 @@
 (add-to-list 'auto-mode-alist '("\\.module\\'" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.install\\'" . php-mode))
 (add-to-list 'auto-mode-alist '("\\.tpl\\'" . html-mode))
-(setq auto-mode-alist (cons '("\\.js$" . js2-mode) auto-mode-alist))
+(setq auto-mode-alist (cons '("\\.js$" . js-mode) auto-mode-alist))
 
 ;;recentf
 (require 'recentf)
@@ -188,7 +188,7 @@
 
 (defun worklog ()
   (interactive)
-  (find-file "/home/kotnik/work.log"))
+  (find-file "~/Dropbox/Text/work.log"))
 (global-set-key [f5] 'worklog)
 
 (require 'uniquify)
@@ -268,3 +268,33 @@
                              "~/Dropbox/Org/carpo.org"
                              "~/Dropbox/Org/drupal.org"
                              "~/Dropbox/Org/private.org"))
+
+;; Alt left/right are for moving through frames
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-unset-key [M-left])
+            (local-unset-key [M-right])
+            ))
+
+;; Ibuffer groupings
+(setq ibuffer-saved-filter-groups
+      (quote (("default"
+               ("Org"
+                (mode . org-mode))
+               ("Drupal"
+                (or
+               (mode . php-mode)
+               (mode . html-mode)
+               (mode . css-mode)
+               ))
+               ("ERC"   (mode . erc-mode))
+               ("Emacs config" (or (filename . ".emacs.d")
+                                   (filename . ".emacs")))
+               ))))
+
+;;               ("MyProject1"
+;;                (filename . "src/myproject1/"))
+
+(add-hook 'ibuffer-mode-hook
+          (lambda ()
+            (ibuffer-switch-to-saved-filter-groups "default")))
