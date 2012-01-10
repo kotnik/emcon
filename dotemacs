@@ -10,6 +10,10 @@
 )
 ;;(toggle-maximize)
 
+;; Display line and column numbers by default
+(setq line-number-mode t)
+(setq column-number-mode t)
+
 ;; Color theme
 (require 'color-theme)
 (color-theme-initialize)
