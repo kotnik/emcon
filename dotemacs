@@ -302,3 +302,17 @@
 (add-hook 'ibuffer-mode-hook
           (lambda ()
             (ibuffer-switch-to-saved-filter-groups "default")))
+
+(setq set-fill-column 79)
+
+(autoload 'markdown-mode "markdown-mode.el"
+   "Major mode for editing Markdown files" t)
+(setq auto-mode-alist
+   (cons '("\\.markdown" . markdown-mode) auto-mode-alist))
+
+(setq ispell-program-name "aspell"
+  ispell-extra-args '("--sug-mode=ultra"))
+
+(add-hook 'markdown-mode-hook
+  (lambda()
+    (flyspell-mode 1)))
