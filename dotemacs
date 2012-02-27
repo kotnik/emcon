@@ -251,17 +251,6 @@
 ;; Show buffer name in title
 (setq frame-title-format "%b - emacs")
 
-;; Welcome message
-(defconst animate-n-steps 30)
-(defun emacs-reloaded ()
-  (animate-string (concat ";; Initialization successful, welcome to "
-  			  (substring (emacs-version) 0 16)
-			  ".")
-		  0 0)
-  (newline-and-indent)  (newline-and-indent))
-
-(add-hook 'after-init-hook 'emacs-reloaded)
-
 (require 'org-install)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
@@ -316,3 +305,10 @@
 (add-hook 'markdown-mode-hook
   (lambda()
     (flyspell-mode 1)))
+
+(defun insert-blog-blob ()
+  "Insert <p></p> at cursor point."
+  (interactive)
+  (defvar blog-blob (concat "---\ndate: " (format-time-string "%Y/%m/%d %H:%M:%S") "\ndraft: False\ncategories: \ntitle: \n---\n") "")
+  (insert blog-blob))
+(global-set-key (kbd "C-c b") 'insert-blog-blob)
