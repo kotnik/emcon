@@ -25,7 +25,8 @@
 (tool-bar-mode -1)
 
 ;; Font
-(set-default-font "terminus-10")
+(set-default-font "Terminus")
+(set-face-attribute 'default nil :height 100)
 
 ;; Modovi
 (require 'mmm-mode)
